@@ -7,7 +7,7 @@ Bối cảnh để Claude Code làm việc trên project. Đọc kỹ trước k
 Ứng dụng web quản lý **tiến trình, file, socket và network** trên Ubuntu (bài tập môn Lập trình nhân Linux).
 
 - **Backend:** FastAPI (Python), chạy bằng `uvicorn`
-- **Frontend:** React + Vite
+- **Frontend:** Next.js (App Router) — UI thuần, gọi thẳng FastAPI qua `fetch`
 - **Môi trường chạy thật:** Ubuntu Server
 
 ## Bối cảnh môi trường QUAN TRỌNG
@@ -34,7 +34,7 @@ Bối cảnh để Claude Code làm việc trên project. Đọc kỹ trước k
 ```
 linux-system-manager/
 ├── backend/      # FastAPI — xem backend/CLAUDE.md
-├── frontend/     # React + Vite — xem frontend/CLAUDE.md
+├── frontend/     # Next.js (App Router) — xem frontend/CLAUDE.md
 ├── sandbox/      # vùng an toàn cho thao tác file/process
 ├── docs/         # tài liệu tham chiếu (api-spec.md)
 ├── PLAN.md       # checklist & kế hoạch (nguồn chân lý)

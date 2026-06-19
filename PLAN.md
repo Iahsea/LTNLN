@@ -2,7 +2,7 @@
 
 ## Lập trình quản lý tiến trình, file, socket và network trong Ubuntu
 
-**Backend:** FastAPI (Python) · **Frontend:** React + Vite
+**Backend:** FastAPI (Python) · **Frontend:** Next.js (App Router)
 
 ---
 
@@ -12,7 +12,7 @@
 - [ ] Cấu hình CORS middleware
 - [ ] Mount 4 router (`process`, `files`, `socket_mod`, `network`)
 - [ ] Định nghĩa schema Pydantic chung trong `core/schemas.py`
-- [ ] Cấu hình FastAPI serve file tĩnh React (`dist/`)
+- [ ] CORS cho phép origin Next.js dev (`http://localhost:3000`)
 
 ---
 
@@ -69,27 +69,33 @@
 
 ---
 
-## 7. Frontend — React + Vite
+## 7. Frontend — Next.js (App Router)
 
-- [ ] Layout: sidebar 4 module + topbar
+> Next.js chỉ làm UI thuần, gọi thẳng FastAPI qua `fetch`. KHÔNG dùng API route của Next (`app/api/`) cho system call.
+> Thư viện dự kiến (theo skill `ui-design`): Tailwind CSS, shadcn/ui, lucide-react, font Inter/Geist + JetBrains Mono. Cài qua `create-next-app` + `npx shadcn` — dừng & hỏi trước khi cài thêm gì khác.
+
+- [ ] Layout gốc (`app/layout.tsx`): sidebar 4 module + topbar
 - [ ] Component tái sử dụng: `Sidebar`, `Table`, `Terminal`, `StatCard`
-- [ ] `api.js`: hàm gọi backend bằng axios/fetch
-- [ ] Trang Process: bảng tiến trình + nút kill / spawn
-- [ ] Trang Files: bảng file + nút đọc / ghi / xóa / chmod
-- [ ] Trang Socket: bảng kết nối + form echo
-- [ ] Trang Network: bảng interface + form DNS lookup / ping
+- [ ] `lib/api.ts`: hàm gọi backend bằng `fetch`
+- [ ] Trang Process (`app/process/page.tsx`): bảng tiến trình + nút kill / spawn
+- [ ] Trang Files (`app/files/page.tsx`): bảng file + nút đọc / ghi / xóa / chmod
+- [ ] Trang Socket (`app/socket/page.tsx`): bảng kết nối + form echo
+- [ ] Trang Network (`app/network/page.tsx`): bảng interface + form DNS lookup / ping
+- [ ] Đánh dấu `"use client"` cho các trang/component có state, polling, WebSocket
 - [ ] Auto refresh dữ liệu (`setInterval` / polling)
 - [ ] Khung terminal hiển thị log realtime qua WebSocket
-- [ ] Cấu hình `vite.config.js` proxy `/api` → backend
+- [ ] Cấu hình `next.config.js` rewrites proxy `/api` và `/ws` → backend
 
 ---
 
 ## 8. Tích hợp & đóng gói
 
-- [ ] Kết nối FE-BE, kiểm tra CORS hoạt động
-- [ ] `npm run build` → FastAPI serve thư mục `dist`
-- [ ] Chạy toàn bộ app bằng một lệnh `uvicorn main:app`
-- [ ] Test end-to-end từng chức năng trên Ubuntu
+> Mô hình: **2 tiến trình song song** — `uvicorn` (8066) + Next.js (3000). Frontend gọi backend qua rewrites proxy (`/api`, `/ws`), không để FastAPI serve frontend.
+
+- [ ] Kết nối FE-BE qua rewrites proxy, kiểm tra `/api` và `/ws` thông
+- [ ] `next dev` (dev) / `next build` + `next start` (chạy thật) cho frontend
+- [ ] `uvicorn main:app --port 8066` cho backend (tiến trình riêng)
+- [ ] Test end-to-end từng chức năng trên Ubuntu (chạy cả 2 tiến trình)
 
 ---
 
@@ -108,13 +114,18 @@ linux-manager/
 │   │   ├── schemas.py        # Pydantic models
 │   │   └── epoll_demo.py     # select/epoll độc lập
 │   └── requirements.txt      # fastapi, uvicorn, psutil
-├── frontend/                 # React + Vite
-│   ├── src/
-│   │   ├── App.jsx           # layout + routing
-│   │   ├── components/       # Sidebar, Table, Terminal
-│   │   ├── pages/            # Process, Files, Socket, Network
-│   │   └── api.js            # axios gọi backend
-│   ├── vite.config.js        # proxy → backend
+├── frontend/                 # Next.js (App Router)
+│   ├── app/
+│   │   ├── layout.tsx        # layout + sidebar/topbar
+│   │   ├── page.tsx          # trang chủ / dashboard
+│   │   ├── process/page.tsx  # các trang Process / Files / Socket / Network
+│   │   ├── files/page.tsx
+│   │   ├── socket/page.tsx
+│   │   └── network/page.tsx
+│   ├── components/           # Sidebar, Table, Terminal, StatCard
+│   ├── lib/
+│   │   └── api.ts            # fetch gọi backend
+│   ├── next.config.js        # rewrites proxy /api và /ws → backend
 │   └── package.json
 └── README.md
 ```

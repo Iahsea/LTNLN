@@ -3,7 +3,7 @@
 Ứng dụng web quản lý **tiến trình, file, socket và network** trên Ubuntu.
 
 - **Backend:** FastAPI (Python)
-- **Frontend:** React + Vite
+- **Frontend:** Next.js (App Router)
 - **Môi trường chạy:** Ubuntu Server (VMware)
 
 Xem chi tiết kế hoạch tại [`PLAN.md`](./PLAN.md).
@@ -17,7 +17,7 @@ linux-system-manager/
 │   ├── routers/              # process, files, socket_mod, network
 │   ├── core/                 # schemas (Pydantic), epoll_demo
 │   └── requirements.txt
-├── frontend/                 # React + Vite (tạo bằng npm create vite)
+├── frontend/                 # Next.js (App Router) — gọi backend qua rewrites proxy
 ├── README.md
 └── .gitignore
 ```
@@ -39,8 +39,11 @@ Kiểm tra nhanh: <http://localhost:8066/api/health>
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev   # http://localhost:3000, proxy /api và /ws về backend (8066)
 ```
+
+Backend và frontend chạy thành **2 tiến trình song song** (uvicorn 8066 +
+Next.js 3000); frontend gọi backend qua rewrites proxy.
 
 ## Trạng thái
 

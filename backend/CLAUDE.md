@@ -5,7 +5,7 @@ Quy tắc riêng cho `backend/`. Đọc kèm `CLAUDE.md` gốc.
 ## Cấu trúc
 ```
 backend/
-├── main.py            # khởi tạo app, CORS, mount router, serve dist/
+├── main.py            # khởi tạo app, CORS, mount router
 ├── routers/           # process.py, files.py, socket_mod.py, network.py
 ├── core/              # schemas.py (Pydantic), epoll_demo.py (chạy riêng)
 └── requirements.txt

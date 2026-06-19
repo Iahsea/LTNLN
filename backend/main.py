@@ -16,13 +16,14 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Cho phép frontend (React + Vite) gọi API trong môi trường dev.
-# Khi deploy chung (FastAPI serve dist), có thể siết lại danh sách origin.
+# Cho phép frontend (Next.js dev, cổng 3000) gọi API trực tiếp.
+# Dev thường đi qua rewrites proxy của Next (cùng origin, không cần CORS),
+# nhưng vẫn mở origin 3000 cho trường hợp gọi thẳng. Deploy có thể siết lại.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
     ],
     allow_credentials=True,
     allow_methods=["*"],
