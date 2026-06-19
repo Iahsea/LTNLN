@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uvicorn:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)",
+      "Bash(npm:*)",
+      "Bash(node:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(curl:*)",
+      "Edit",
+      "Write"
+    ],
+    "deny": [
+      "Bash(rm -rf:*)",
+      "Bash(sudo:*)",
+      "Read(./.env)",
+      "Read(./**/.env)"
+    ]
+  }
+}
