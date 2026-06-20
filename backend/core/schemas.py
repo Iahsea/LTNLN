@@ -149,3 +149,15 @@ class PingResponse(BaseModel):
     host: str
     reachable: bool
     latency_ms: float | None
+
+
+# ── Realtime (WebSocket /ws/logs) ────────────────────────────────────────
+
+
+class LogEvent(BaseModel):
+    """Một dòng log đẩy realtime qua WS /ws/logs."""
+
+    time: str  # ISO 8601
+    level: str  # INFO / WARN / ERROR
+    module: str  # process / files / socket / network / ws
+    message: str

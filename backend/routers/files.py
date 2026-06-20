@@ -20,6 +20,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 
+from core.logbus import log_bus
 from core.schemas import (
     ChmodRequest,
     ChmodResponse,
@@ -121,6 +122,7 @@ def read_file(path: str):
     except OSError as e:
         raise HTTPException(500, f"Lỗi đọc file: {e}")
 
+    log_bus.log("INFO", "files", f"Đọc file {_rel(target)}")
     return FileReadResponse(path=_rel(target), content=content)
 
 
@@ -145,6 +147,7 @@ def write_file(req: FileWriteRequest):
         raise HTTPException(500, f"Lỗi ghi file: {e}")
 
     bytes_written = len(req.content.encode("utf-8"))
+    log_bus.log("INFO", "files", f"Ghi file {_rel(target)} ({bytes_written} bytes)")
     return FileWriteResponse(path=_rel(target), bytes_written=bytes_written)
 
 
@@ -166,6 +169,7 @@ def delete_file(path: str):
     except OSError as e:
         raise HTTPException(500, f"Lỗi xóa file: {e}")
 
+    log_bus.log("WARN", "files", f"Xóa file {_rel(target)}")
     return FileDeleteResponse(path=_rel(target), deleted=True)
 
 
@@ -191,4 +195,5 @@ def chmod_file(req: ChmodRequest):
     except OSError as e:
         raise HTTPException(500, f"Lỗi chmod: {e}")
 
+    log_bus.log("INFO", "files", f"Chmod {_rel(target)} -> {req.mode}")
     return ChmodResponse(path=_rel(target), mode=req.mode)

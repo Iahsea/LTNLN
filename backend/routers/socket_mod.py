@@ -19,6 +19,7 @@ from pathlib import Path
 import psutil
 from fastapi import APIRouter, HTTPException
 
+from core.logbus import log_bus
 from core.schemas import EchoRequest, EchoResponse, SocketConnection
 
 router = APIRouter(prefix="/api/socket", tags=["socket"])
@@ -195,6 +196,7 @@ def tcp_echo(req: EchoRequest):
         received = _tcp_echo_once(req.message)
     except (OSError, socket.timeout) as e:
         raise HTTPException(500, f"Lỗi TCP echo: {e}")
+    log_bus.log("INFO", "socket", f"TCP echo: {req.message!r}")
     return EchoResponse(transport="tcp", sent=req.message, received=received)
 
 
@@ -205,6 +207,7 @@ def udp_echo(req: EchoRequest):
         received = _udp_echo_once(req.message)
     except (OSError, socket.timeout) as e:
         raise HTTPException(500, f"Lỗi UDP echo: {e}")
+    log_bus.log("INFO", "socket", f"UDP echo: {req.message!r}")
     return EchoResponse(transport="udp", sent=req.message, received=received)
 
 
@@ -218,4 +221,5 @@ def unix_echo(req: EchoRequest):
         received = _unix_echo_once(req.message)
     except (OSError, socket.timeout) as e:
         raise HTTPException(500, f"Lỗi Unix socket echo: {e}")
+    log_bus.log("INFO", "socket", f"Unix echo: {req.message!r}")
     return EchoResponse(transport="unix", sent=req.message, received=received)

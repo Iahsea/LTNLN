@@ -11,7 +11,7 @@
 - [x] `main.py`: khởi tạo FastAPI app
 - [x] Cấu hình CORS middleware
 - [x] Mount 4 router (`process`, `files`, `socket_mod`, `network`)
-- [ ] Định nghĩa schema Pydantic chung trong `core/schemas.py`
+- [x] Định nghĩa schema Pydantic chung trong `core/schemas.py`
 - [x] CORS cho phép origin Next.js dev (`http://localhost:3000`)
 
 ---
@@ -63,9 +63,9 @@
 
 ## 6. Realtime (WebSocket)
 
-- [ ] `WS /ws/logs` — stream log realtime bằng `asyncio`
-- [ ] Đẩy log của các thao tác (spawn process, đọc file, kết nối socket...) về frontend
-- [ ] Xử lý kết nối / ngắt kết nối WebSocket
+- [x] `WS /ws/logs` — stream log realtime bằng `asyncio`
+- [x] Đẩy log của các thao tác (spawn process, đọc file, kết nối socket...) về frontend
+- [x] Xử lý kết nối / ngắt kết nối WebSocket
 
 ---
 
@@ -151,12 +151,12 @@ linux-manager/
 | Network | `/api/network/interfaces` | GET | `psutil.net_if_addrs` | Liệt kê card mạng | [x] |
 | Network | `/api/network/dns` | GET | `socket.getaddrinfo` | DNS lookup | [x] |
 | Network | `/api/network/ping` | GET | `socket` / `subprocess` | Ping host | [x] |
-| Realtime | `/ws/logs` | WebSocket | `asyncio` | Stream log trực tiếp | [ ] |
+| Realtime | `/ws/logs` | WebSocket | `asyncio` | Stream log trực tiếp | [x] |
 
 ---
 
 ## Lưu ý kỹ thuật
 
 - [x] Phần `select` / `epoll` tách thành file demo độc lập (`epoll_demo.py`) chạy riêng bằng terminal để thể hiện đúng kiến thức môn học.
-- [ ] Mọi thao tác file/process giới hạn trong thư mục sandbox để an toàn.
-- [ ] Định nghĩa schema Pydantic rõ ràng cho mọi response để frontend dễ parse.
+- [x] Mọi thao tác file/process giới hạn trong thư mục sandbox để an toàn.
+- [x] Định nghĩa schema Pydantic rõ ràng cho mọi response để frontend dễ parse.

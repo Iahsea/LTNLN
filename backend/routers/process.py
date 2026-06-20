@@ -22,6 +22,7 @@ from pathlib import Path
 import psutil
 from fastapi import APIRouter, HTTPException
 
+from core.logbus import log_bus
 from core.schemas import KillResponse, ProcessInfo, SpawnRequest, SpawnResponse
 
 router = APIRouter(prefix="/api/process", tags=["process"])
@@ -128,6 +129,7 @@ def spawn_process(req: SpawnRequest):
 
     _children[proc.pid] = proc
     status = "running" if proc.poll() is None else "exited"
+    log_bus.log("INFO", "process", f"Spawn PID {proc.pid}: {command}")
     return SpawnResponse(pid=proc.pid, status=status)
 
 
@@ -164,4 +166,5 @@ def kill_process(pid: int):
             pass
     _children.pop(pid, None)
 
+    log_bus.log("WARN", "process", f"Đã kill PID {pid} (SIGTERM)")
     return KillResponse(pid=pid, killed=True)
