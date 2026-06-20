@@ -74,9 +74,9 @@
 > Next.js chỉ làm UI thuần, gọi thẳng FastAPI qua `fetch`. KHÔNG dùng API route của Next (`app/api/`) cho system call.
 > Thư viện dự kiến (theo skill `ui-design`): Tailwind CSS, shadcn/ui, lucide-react, font Inter/Geist + JetBrains Mono. Cài qua `create-next-app` + `npx shadcn` — dừng & hỏi trước khi cài thêm gì khác.
 
-- [ ] Layout gốc (`app/layout.tsx`): sidebar 4 module + topbar
+- [x] Layout gốc (`app/layout.tsx`): sidebar 4 module + topbar
 - [ ] Component tái sử dụng: `Sidebar`, `Table`, `Terminal`, `StatCard`
-- [ ] `lib/api.ts`: hàm gọi backend bằng `fetch`
+- [x] `lib/api.ts`: hàm gọi backend bằng `fetch`
 - [ ] Trang Process (`app/process/page.tsx`): bảng tiến trình + nút kill / spawn
 - [ ] Trang Files (`app/files/page.tsx`): bảng file + nút đọc / ghi / xóa / chmod
 - [ ] Trang Socket (`app/socket/page.tsx`): bảng kết nối + form echo
@@ -84,7 +84,7 @@
 - [ ] Đánh dấu `"use client"` cho các trang/component có state, polling, WebSocket
 - [ ] Auto refresh dữ liệu (`setInterval` / polling)
 - [ ] Khung terminal hiển thị log realtime qua WebSocket
-- [ ] Cấu hình `next.config.js` rewrites proxy `/api` và `/ws` → backend
+- [x] Cấu hình `next.config.js` rewrites proxy `/api` và `/ws` → backend (dùng `next.config.ts`)
 
 ---
 
