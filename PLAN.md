@@ -8,22 +8,22 @@
 
 ## 1. Backend — Khung ứng dụng
 
-- [ ] `main.py`: khởi tạo FastAPI app
-- [ ] Cấu hình CORS middleware
-- [ ] Mount 4 router (`process`, `files`, `socket_mod`, `network`)
+- [x] `main.py`: khởi tạo FastAPI app
+- [x] Cấu hình CORS middleware
+- [x] Mount 4 router (`process`, `files`, `socket_mod`, `network`)
 - [ ] Định nghĩa schema Pydantic chung trong `core/schemas.py`
-- [ ] CORS cho phép origin Next.js dev (`http://localhost:3000`)
+- [x] CORS cho phép origin Next.js dev (`http://localhost:3000`)
 
 ---
 
 ## 2. Module tiến trình (Process)
 
-- [ ] `GET /api/process` — liệt kê tiến trình đang chạy (đọc `/proc` hoặc `psutil`)
-- [ ] `POST /api/process/spawn` — tạo tiến trình con bằng `subprocess.Popen` (fork/exec)
-- [ ] `DELETE /api/process/{pid}/kill` — gửi signal kết thúc bằng `os.kill`
-- [ ] Thu hồi tiến trình con (`wait` / tránh zombie process)
-- [ ] Xử lý signal: bắt `SIGCHLD`, `SIGTERM`
-- [ ] Trả về thông tin: PID, PPID, tên, trạng thái, CPU%, bộ nhớ
+- [x] `GET /api/process` — liệt kê tiến trình đang chạy (đọc `/proc` hoặc `psutil`)
+- [x] `POST /api/process/spawn` — tạo tiến trình con bằng `subprocess.Popen` (fork/exec)
+- [x] `DELETE /api/process/{pid}/kill` — gửi signal kết thúc bằng `os.kill`
+- [x] Thu hồi tiến trình con (`wait` / tránh zombie process)
+- [x] Xử lý signal: bắt `SIGCHLD`, `SIGTERM`
+- [x] Trả về thông tin: PID, PPID, tên, trạng thái, CPU%, bộ nhớ
 
 ---
 
@@ -136,9 +136,9 @@ linux-manager/
 
 | Module | Endpoint | Method | System call / lib | Chức năng | Trạng thái |
 |---|---|---|---|---|---|
-| Tiến trình | `/api/process` | GET | `psutil`, `/proc` | Liệt kê tiến trình | [ ] |
-| Tiến trình | `/api/process/spawn` | POST | `subprocess.Popen` | Tạo tiến trình con | [ ] |
-| Tiến trình | `/api/process/{pid}/kill` | DELETE | `os.kill` + signal | Gửi tín hiệu kết thúc | [ ] |
+| Tiến trình | `/api/process` | GET | `psutil`, `/proc` | Liệt kê tiến trình | [x] |
+| Tiến trình | `/api/process/spawn` | POST | `subprocess.Popen` | Tạo tiến trình con | [x] |
+| Tiến trình | `/api/process/{pid}/kill` | DELETE | `os.kill` + signal | Gửi tín hiệu kết thúc | [x] |
 | File | `/api/files` | GET | `os.listdir`, `os.stat` | Liệt kê file + metadata | [ ] |
 | File | `/api/files/read` | GET | `open`, `read` | Đọc nội dung file | [ ] |
 | File | `/api/files/write` | POST | `open`, `write` | Ghi/tạo file | [ ] |
