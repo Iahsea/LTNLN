@@ -143,9 +143,15 @@ def _unix_echo_once(message: str) -> str:
 
 @router.get("/connections", response_model=list[SocketConnection])
 def list_connections():
-    """Liệt kê kết nối socket TCP/UDP hiện có (psutil.net_connections)."""
+    """Liệt kê kết nối socket hiện có (psutil.net_connections).
+
+    Trên Linux lấy cả Unix domain socket (kind="all"); trên Windows chỉ lấy
+    TCP/UDP (kind="inet") vì AF_UNIX không khả dụng ổn định.
+    """
+    # AF_UNIX chỉ có trên Linux; getattr để không lỗi khi import trên Windows.
+    AF_UNIX = getattr(socket, "AF_UNIX", None)
     try:
-        conns = psutil.net_connections(kind="inet")
+        conns = psutil.net_connections(kind="all" if IS_LINUX else "inet")
     except (psutil.AccessDenied, PermissionError):
         raise HTTPException(403, "Không đủ quyền liệt kê kết nối (thử chạy quyền cao hơn)")
     except OSError as e:
@@ -159,12 +165,23 @@ def list_connections():
             kind = "UDP"
         else:
             kind = str(c.type)
+
+        if AF_UNIX is not None and c.family == AF_UNIX:
+            # Unix socket: laddr là đường dẫn file (chuỗi), không có ip/port.
+            kind = "UNIX-" + kind  # UNIX-TCP (stream) / UNIX-UDP (dgram)
+            local_addr = c.laddr if isinstance(c.laddr, str) else ""
+            remote_addr = c.raddr if isinstance(c.raddr, str) else ""
+        else:
+            # Socket internet: laddr/raddr là tuple (ip, port).
+            local_addr = f"{c.laddr.ip}:{c.laddr.port}" if c.laddr else ""
+            remote_addr = f"{c.raddr.ip}:{c.raddr.port}" if c.raddr else ""
+
         result.append(
             SocketConnection(
                 fd=c.fd if c.fd is not None else -1,
                 type=kind,
-                local_addr=f"{c.laddr.ip}:{c.laddr.port}" if c.laddr else "",
-                remote_addr=f"{c.raddr.ip}:{c.raddr.port}" if c.raddr else "",
+                local_addr=local_addr,
+                remote_addr=remote_addr,
                 status=c.status or "NONE",
             )
         )
