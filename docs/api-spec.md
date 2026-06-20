@@ -50,9 +50,19 @@ Liệt kê kết nối socket hiện tại.
 **Response:** `[{ fd, type, local_addr, remote_addr, status }]`
 
 ### POST /api/socket/echo
-Gửi chuỗi tới echo server demo, nhận lại.
+Gửi chuỗi tới **TCP** echo server demo (socket/bind/listen/accept/send/recv), nhận lại.
 **Request:** `{ "message": "string" }`
-**Response:** `{ sent, received }`
+**Response:** `{ transport: "tcp", sent, received }`
+
+### POST /api/socket/udp-echo
+Demo **UDP** echo (sendto/recvfrom, giao thức không kết nối).
+**Request:** `{ "message": "string" }`
+**Response:** `{ transport: "udp", sent, received }`
+
+### POST /api/socket/unix-echo
+Demo **Unix domain socket** (AF_UNIX, IPC nội bộ máy). **Chỉ Linux** — trên Windows trả HTTP 501.
+**Request:** `{ "message": "string" }`
+**Response:** `{ transport: "unix", sent, received }`
 
 ## Module network
 

@@ -93,3 +93,30 @@ class ChmodResponse(BaseModel):
 
     path: str
     mode: str
+
+
+# ── Module socket (Socket Programming) ───────────────────────────────────
+
+
+class SocketConnection(BaseModel):
+    """Một kết nối socket hiện có (GET /api/socket/connections)."""
+
+    fd: int
+    type: str  # TCP / UDP
+    local_addr: str  # "ip:port"
+    remote_addr: str  # "ip:port" (rỗng nếu chưa kết nối)
+    status: str  # LISTEN, ESTABLISHED, CLOSE_WAIT, NONE...
+
+
+class EchoRequest(BaseModel):
+    """Body cho các endpoint echo (TCP / UDP / Unix)."""
+
+    message: str
+
+
+class EchoResponse(BaseModel):
+    """Kết quả gửi/nhận qua echo server demo."""
+
+    transport: str  # tcp / udp / unix
+    sent: str
+    received: str

@@ -42,12 +42,12 @@
 
 ## 4. Module socket (Socket Programming)
 
-- [ ] `POST /api/socket/echo` — TCP echo server demo (`socket`, `bind`, `listen`, `accept`)
-- [ ] `GET /api/socket/connections` — liệt kê kết nối socket (`psutil.net_connections`)
-- [ ] Gửi / nhận dữ liệu (`send` / `recv`)
-- [ ] Demo UDP socket
-- [ ] Demo Unix domain socket (IPC giữa 2 tiến trình)
-- [ ] Hiển thị trạng thái kết nối: LISTEN, ESTABLISHED, CLOSE_WAIT...
+- [x] `POST /api/socket/echo` — TCP echo server demo (`socket`, `bind`, `listen`, `accept`)
+- [x] `GET /api/socket/connections` — liệt kê kết nối socket (`psutil.net_connections`)
+- [x] Gửi / nhận dữ liệu (`send` / `recv`)
+- [x] Demo UDP socket
+- [x] Demo Unix domain socket (IPC giữa 2 tiến trình)
+- [x] Hiển thị trạng thái kết nối: LISTEN, ESTABLISHED, CLOSE_WAIT...
 
 ---
 
@@ -144,8 +144,10 @@ linux-manager/
 | File | `/api/files/write` | POST | `open`, `write` | Ghi/tạo file | [x] |
 | File | `/api/files/delete` | DELETE | `os.remove` | Xóa file | [x] |
 | File | `/api/files/chmod` | PATCH | `os.chmod` | Đổi quyền file | [x] |
-| Socket | `/api/socket/connections` | GET | `psutil.net_connections` | Liệt kê kết nối | [ ] |
-| Socket | `/api/socket/echo` | POST | `socket` | TCP echo server | [ ] |
+| Socket | `/api/socket/connections` | GET | `psutil.net_connections` | Liệt kê kết nối | [x] |
+| Socket | `/api/socket/echo` | POST | `socket` | TCP echo server | [x] |
+| Socket | `/api/socket/udp-echo` | POST | `socket` (UDP) | UDP echo demo | [x] |
+| Socket | `/api/socket/unix-echo` | POST | `socket` (AF_UNIX) | Unix socket demo (Linux) | [x] |
 | Network | `/api/network/interfaces` | GET | `psutil.net_if_addrs` | Liệt kê card mạng | [ ] |
 | Network | `/api/network/dns` | GET | `socket.getaddrinfo` | DNS lookup | [ ] |
 | Network | `/api/network/ping` | GET | `socket` / `subprocess` | Ping host | [ ] |
