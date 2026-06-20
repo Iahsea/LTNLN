@@ -38,3 +38,58 @@ class KillResponse(BaseModel):
 
     pid: int
     killed: bool
+
+
+# ── Module file (File I/O) ───────────────────────────────────────────────
+
+
+class FileInfo(BaseModel):
+    """Metadata một mục trong thư mục (GET /api/files)."""
+
+    name: str
+    size: int
+    permissions: str  # dạng ls -l, ví dụ "-rw-r--r--"
+    is_dir: bool
+    modified: str  # thời điểm sửa đổi, ISO 8601
+
+
+class FileReadResponse(BaseModel):
+    """Nội dung file (GET /api/files/read)."""
+
+    path: str
+    content: str
+
+
+class FileWriteRequest(BaseModel):
+    """Body cho POST /api/files/write."""
+
+    path: str
+    content: str
+
+
+class FileWriteResponse(BaseModel):
+    """Kết quả ghi file."""
+
+    path: str
+    bytes_written: int
+
+
+class FileDeleteResponse(BaseModel):
+    """Kết quả xóa file (DELETE /api/files/delete)."""
+
+    path: str
+    deleted: bool
+
+
+class ChmodRequest(BaseModel):
+    """Body cho PATCH /api/files/chmod."""
+
+    path: str
+    mode: str  # quyền dạng bát phân, ví dụ "644"
+
+
+class ChmodResponse(BaseModel):
+    """Kết quả đổi quyền file."""
+
+    path: str
+    mode: str

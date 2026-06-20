@@ -29,14 +29,14 @@
 
 ## 3. Module file (File I/O)
 
-- [ ] `GET /api/files` — liệt kê file + metadata (`os.listdir`, `os.stat`)
-- [ ] `GET /api/files/read` — đọc nội dung file (`open`, `read`)
-- [ ] `POST /api/files/write` — ghi / tạo file (`open`, `write`)
-- [ ] `DELETE /api/files/delete` — xóa file (`os.remove`)
-- [ ] `PATCH /api/files/chmod` — đổi quyền file (`os.chmod`)
-- [ ] Duyệt thư mục (`opendir` / `os.scandir`)
-- [ ] Hiển thị quyền truy cập dạng `rwxr-xr-x`
-- [ ] Giới hạn thao tác trong thư mục sandbox (tránh xóa nhầm file hệ thống)
+- [x] `GET /api/files` — liệt kê file + metadata (`os.listdir`, `os.stat`)
+- [x] `GET /api/files/read` — đọc nội dung file (`open`, `read`)
+- [x] `POST /api/files/write` — ghi / tạo file (`open`, `write`)
+- [x] `DELETE /api/files/delete` — xóa file (`os.remove`)
+- [x] `PATCH /api/files/chmod` — đổi quyền file (`os.chmod`)
+- [x] Duyệt thư mục (`opendir` / `os.scandir`)
+- [x] Hiển thị quyền truy cập dạng `rwxr-xr-x`
+- [x] Giới hạn thao tác trong thư mục sandbox (tránh xóa nhầm file hệ thống)
 
 ---
 
@@ -139,11 +139,11 @@ linux-manager/
 | Tiến trình | `/api/process` | GET | `psutil`, `/proc` | Liệt kê tiến trình | [x] |
 | Tiến trình | `/api/process/spawn` | POST | `subprocess.Popen` | Tạo tiến trình con | [x] |
 | Tiến trình | `/api/process/{pid}/kill` | DELETE | `os.kill` + signal | Gửi tín hiệu kết thúc | [x] |
-| File | `/api/files` | GET | `os.listdir`, `os.stat` | Liệt kê file + metadata | [ ] |
-| File | `/api/files/read` | GET | `open`, `read` | Đọc nội dung file | [ ] |
-| File | `/api/files/write` | POST | `open`, `write` | Ghi/tạo file | [ ] |
-| File | `/api/files/delete` | DELETE | `os.remove` | Xóa file | [ ] |
-| File | `/api/files/chmod` | PATCH | `os.chmod` | Đổi quyền file | [ ] |
+| File | `/api/files` | GET | `os.listdir`, `os.stat` | Liệt kê file + metadata | [x] |
+| File | `/api/files/read` | GET | `open`, `read` | Đọc nội dung file | [x] |
+| File | `/api/files/write` | POST | `open`, `write` | Ghi/tạo file | [x] |
+| File | `/api/files/delete` | DELETE | `os.remove` | Xóa file | [x] |
+| File | `/api/files/chmod` | PATCH | `os.chmod` | Đổi quyền file | [x] |
 | Socket | `/api/socket/connections` | GET | `psutil.net_connections` | Liệt kê kết nối | [ ] |
 | Socket | `/api/socket/echo` | POST | `socket` | TCP echo server | [ ] |
 | Network | `/api/network/interfaces` | GET | `psutil.net_if_addrs` | Liệt kê card mạng | [ ] |
