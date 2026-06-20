@@ -120,3 +120,32 @@ class EchoResponse(BaseModel):
     transport: str  # tcp / udp / unix
     sent: str
     received: str
+
+
+# ── Module network (Network Programming) ─────────────────────────────────
+
+
+class NetworkInterface(BaseModel):
+    """Thông tin một card mạng (GET /api/network/interfaces)."""
+
+    name: str
+    ipv4: str  # địa chỉ IPv4 (rỗng nếu interface không có IPv4)
+    netmask: str
+    flags: str  # ví dụ "UP,MTU=1500"
+    rx_bytes: int  # số byte nhận
+    tx_bytes: int  # số byte gửi
+
+
+class DnsResponse(BaseModel):
+    """Kết quả DNS lookup (GET /api/network/dns)."""
+
+    host: str
+    addresses: list[str]
+
+
+class PingResponse(BaseModel):
+    """Kết quả ping host (GET /api/network/ping)."""
+
+    host: str
+    reachable: bool
+    latency_ms: float | None

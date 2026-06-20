@@ -53,11 +53,11 @@
 
 ## 5. Module network (Network Programming)
 
-- [ ] `GET /api/network/interfaces` — liệt kê card mạng (`psutil.net_if_addrs` / `getifaddrs`)
-- [ ] `GET /api/network/dns` — DNS lookup (`socket.getaddrinfo`)
-- [ ] `GET /api/network/ping` — ping host
-- [ ] Hiển thị IPv4, netmask, flags, RX/TX bytes của từng interface
-- [ ] Module độc lập demo `select` / `epoll` xử lý nhiều client cùng lúc (`core/epoll_demo.py`)
+- [x] `GET /api/network/interfaces` — liệt kê card mạng (`psutil.net_if_addrs` / `getifaddrs`)
+- [x] `GET /api/network/dns` — DNS lookup (`socket.getaddrinfo`)
+- [x] `GET /api/network/ping` — ping host
+- [x] Hiển thị IPv4, netmask, flags, RX/TX bytes của từng interface
+- [x] Module độc lập demo `select` / `epoll` xử lý nhiều client cùng lúc (`core/epoll_demo.py`)
 
 ---
 
@@ -148,15 +148,15 @@ linux-manager/
 | Socket | `/api/socket/echo` | POST | `socket` | TCP echo server | [x] |
 | Socket | `/api/socket/udp-echo` | POST | `socket` (UDP) | UDP echo demo | [x] |
 | Socket | `/api/socket/unix-echo` | POST | `socket` (AF_UNIX) | Unix socket demo (Linux) | [x] |
-| Network | `/api/network/interfaces` | GET | `psutil.net_if_addrs` | Liệt kê card mạng | [ ] |
-| Network | `/api/network/dns` | GET | `socket.getaddrinfo` | DNS lookup | [ ] |
-| Network | `/api/network/ping` | GET | `socket` / `subprocess` | Ping host | [ ] |
+| Network | `/api/network/interfaces` | GET | `psutil.net_if_addrs` | Liệt kê card mạng | [x] |
+| Network | `/api/network/dns` | GET | `socket.getaddrinfo` | DNS lookup | [x] |
+| Network | `/api/network/ping` | GET | `socket` / `subprocess` | Ping host | [x] |
 | Realtime | `/ws/logs` | WebSocket | `asyncio` | Stream log trực tiếp | [ ] |
 
 ---
 
 ## Lưu ý kỹ thuật
 
-- [ ] Phần `select` / `epoll` tách thành file demo độc lập (`epoll_demo.py`) chạy riêng bằng terminal để thể hiện đúng kiến thức môn học.
+- [x] Phần `select` / `epoll` tách thành file demo độc lập (`epoll_demo.py`) chạy riêng bằng terminal để thể hiện đúng kiến thức môn học.
 - [ ] Mọi thao tác file/process giới hạn trong thư mục sandbox để an toàn.
 - [ ] Định nghĩa schema Pydantic rõ ràng cho mọi response để frontend dễ parse.
