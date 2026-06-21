@@ -75,15 +75,15 @@
 > Thư viện dự kiến (theo skill `ui-design`): Tailwind CSS, shadcn/ui, lucide-react, font Inter/Geist + JetBrains Mono. Cài qua `create-next-app` + `npx shadcn` — dừng & hỏi trước khi cài thêm gì khác.
 
 - [x] Layout gốc (`app/layout.tsx`): sidebar 4 module + topbar
-- [ ] Component tái sử dụng: `Sidebar`, `Table`, `Terminal`, `StatCard`
+- [x] Component tái sử dụng: `Sidebar`, `Table` (`DataTable`), `Terminal`, `StatCard` (+ `StatusBadge`)
 - [x] `lib/api.ts`: hàm gọi backend bằng `fetch`
-- [ ] Trang Process (`app/process/page.tsx`): bảng tiến trình + nút kill / spawn
+- [x] Trang Process (`app/process/page.tsx`): bảng tiến trình + nút kill / spawn
 - [ ] Trang Files (`app/files/page.tsx`): bảng file + nút đọc / ghi / xóa / chmod
 - [ ] Trang Socket (`app/socket/page.tsx`): bảng kết nối + form echo
 - [ ] Trang Network (`app/network/page.tsx`): bảng interface + form DNS lookup / ping
-- [ ] Đánh dấu `"use client"` cho các trang/component có state, polling, WebSocket
-- [ ] Auto refresh dữ liệu (`setInterval` / polling)
-- [ ] Khung terminal hiển thị log realtime qua WebSocket
+- [x] Đánh dấu `"use client"` cho các trang/component có state, polling, WebSocket
+- [x] Auto refresh dữ liệu (`setInterval` / polling)
+- [x] Khung terminal hiển thị log realtime qua WebSocket
 - [x] Cấu hình `next.config.js` rewrites proxy `/api` và `/ws` → backend (dùng `next.config.ts`)
 
 ---

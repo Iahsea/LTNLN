@@ -20,10 +20,16 @@ import sys
 from pathlib import Path
 
 import psutil
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 
 from core.logbus import log_bus
-from core.schemas import KillResponse, ProcessInfo, SpawnRequest, SpawnResponse
+from core.schemas import (
+    KillResponse,
+    ProcessInfo,
+    ProcessListResponse,
+    SpawnRequest,
+    SpawnResponse,
+)
 
 router = APIRouter(prefix="/api/process", tags=["process"])
 
@@ -68,11 +74,18 @@ if IS_LINUX:
         pass
 
 
-@router.get("", response_model=list[ProcessInfo])
-def list_processes():
-    """Liệt kê tiến trình đang chạy bằng psutil (cross-platform)."""
+@router.get("", response_model=ProcessListResponse)
+def list_processes(
+    page: int = Query(1, ge=1, description="Trang hiện tại, bắt đầu từ 1"),
+    page_size: int = Query(20, ge=1, le=200, description="Số dòng mỗi trang"),
+):
+    """Liệt kê tiến trình đang chạy bằng psutil (cross-platform), có phân trang.
+
+    Đọc toàn bộ bảng tiến trình rồi sắp xếp theo PID để thứ tự ổn định giữa
+    các lần tải (tránh nhảy dòng khi auto-refresh), sau đó cắt theo trang.
+    """
     _reap_children()
-    result: list[ProcessInfo] = []
+    all_procs: list[ProcessInfo] = []
     # psutil.process_iter duyệt bảng tiến trình (trên Linux là đọc /proc).
     for proc in psutil.process_iter(
         ["pid", "name", "ppid", "status", "cpu_percent", "memory_info"]
@@ -80,7 +93,7 @@ def list_processes():
         try:
             info = proc.info
             mem = info.get("memory_info")
-            result.append(
+            all_procs.append(
                 ProcessInfo(
                     pid=info["pid"],
                     name=info.get("name") or "",
@@ -93,7 +106,27 @@ def list_processes():
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             # Tiến trình biến mất hoặc không đủ quyền khi đọc → bỏ qua.
             continue
-    return result
+
+    # Sắp xếp theo PID cho thứ tự phân trang ổn định.
+    all_procs.sort(key=lambda p: p.pid)
+
+    # Thống kê trên TOÀN BỘ (không chỉ trang hiện tại) để frontend hiển thị đúng.
+    total = len(all_procs)
+    running = sum(1 for p in all_procs if p.status.lower() == "running")
+    total_pages = max(1, (total + page_size - 1) // page_size)
+
+    # Cắt trang; nếu page vượt quá thì trả trang rỗng (items = []).
+    start = (page - 1) * page_size
+    items = all_procs[start : start + page_size]
+
+    return ProcessListResponse(
+        items=items,
+        total=total,
+        running=running,
+        page=page,
+        page_size=page_size,
+        total_pages=total_pages,
+    )
 
 
 @router.post("/spawn", response_model=SpawnResponse)

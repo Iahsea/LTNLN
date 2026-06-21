@@ -20,6 +20,21 @@ class ProcessInfo(BaseModel):
     memory_kb: int
 
 
+class ProcessListResponse(BaseModel):
+    """Kết quả phân trang danh sách tiến trình (GET /api/process).
+
+    Ngoài các tiến trình của trang hiện tại, trả kèm tổng số & số đang chạy
+    trên TOÀN BỘ để frontend hiển thị thống kê đúng dù chỉ tải một trang.
+    """
+
+    items: list[ProcessInfo]
+    total: int  # tổng số tiến trình
+    running: int  # số tiến trình đang chạy (toàn bộ)
+    page: int  # trang hiện tại (bắt đầu từ 1)
+    page_size: int  # số dòng mỗi trang
+    total_pages: int  # tổng số trang
+
+
 class SpawnRequest(BaseModel):
     """Body cho POST /api/process/spawn."""
 

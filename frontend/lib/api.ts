@@ -14,6 +14,14 @@ export interface ProcessInfo {
   cpu_percent: number;
   memory_kb: number;
 }
+export interface ProcessListResponse {
+  items: ProcessInfo[];
+  total: number;
+  running: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}
 export interface SpawnResponse {
   pid: number;
   status: string;
@@ -115,7 +123,10 @@ export const getHealth = () => request<{ status: string }>("/api/health");
 
 // ── Module tiến trình ─────────────────────────────────────────────────────
 
-export const listProcesses = () => request<ProcessInfo[]>("/api/process");
+export const listProcesses = (page = 1, pageSize = 20) =>
+  request<ProcessListResponse>(
+    "/api/process" + qs({ page: String(page), page_size: String(pageSize) })
+  );
 
 export const spawnProcess = (command: string) =>
   request<SpawnResponse>("/api/process/spawn", {
