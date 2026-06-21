@@ -23,6 +23,7 @@ import {
 } from "@/lib/api";
 import { DataTable, type Column } from "@/components/data-table";
 import { StatCard } from "@/components/stat-card";
+import { Terminal } from "@/components/terminal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -309,6 +310,9 @@ export default function FilesPage() {
         onRetry={() => load(path, true)}
         emptyText="Thư mục trống"
       />
+
+      {/* Log realtime */}
+      <Terminal />
 
       {/* Dialog ghi / tạo file */}
       <Dialog open={writeOpen} onOpenChange={setWriteOpen}>

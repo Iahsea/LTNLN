@@ -15,6 +15,7 @@ import {
 import { DataTable, type Column } from "@/components/data-table";
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
+import { Terminal } from "@/components/terminal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -146,9 +147,21 @@ export default function SocketPage() {
           <span className="text-sm font-medium text-foreground">Echo server demo</span>
           <Tabs value={transport} onValueChange={(v) => setTransport(v as Transport)}>
             <TabsList>
-              <TabsTrigger value="tcp">TCP</TabsTrigger>
-              <TabsTrigger value="udp">UDP</TabsTrigger>
-              <TabsTrigger value="unix">Unix</TabsTrigger>
+              {(
+                [
+                  ["tcp", "TCP"],
+                  ["udp", "UDP"],
+                  ["unix", "Unix"],
+                ] as [Transport, string][]
+              ).map(([value, label]) => (
+                <TabsTrigger
+                  key={value}
+                  value={value}
+                  className="px-3 data-[state=active]:border-border data-[state=active]:bg-foreground/10 data-[state=active]:font-medium data-[state=active]:text-foreground"
+                >
+                  {label}
+                </TabsTrigger>
+              ))}
             </TabsList>
           </Tabs>
         </div>
@@ -240,6 +253,9 @@ export default function SocketPage() {
           </Button>
         </div>
       ) : null}
+
+      {/* Log realtime */}
+      <Terminal />
     </div>
   );
 }

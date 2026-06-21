@@ -139,6 +139,8 @@ def spawn_process(req: SpawnRequest):
     if not command:
         raise HTTPException(400, "Lệnh rỗng")
 
+    log_bus.log("INFO", "process", f"───── Spawn tiến trình: {command!r} ─────")
+
     # Tách chuỗi lệnh thành argv; shell=False để tránh chạy lệnh shell phá hủy.
     try:
         args = shlex.split(command, posix=(os.name != "nt"))
@@ -146,9 +148,11 @@ def spawn_process(req: SpawnRequest):
         raise HTTPException(400, f"Lệnh không hợp lệ: {e}")
     if not args:
         raise HTTPException(400, "Lệnh rỗng")
+    log_bus.log("INFO", "process", f"shlex.split() → argv={args} (shell=False cho an toàn)")
 
     try:
         # Popen fork ra tiến trình con rồi exec lệnh; cwd giới hạn trong sandbox.
+        log_bus.log("INFO", "process", f"Popen() → fork()+exec() chạy {args[0]!r} trong sandbox")
         proc = subprocess.Popen(
             args,
             cwd=str(SANDBOX),
@@ -163,18 +167,20 @@ def spawn_process(req: SpawnRequest):
     except OSError as e:
         raise HTTPException(500, f"Lỗi hệ thống khi spawn: {e}")
 
-    _children[proc.pid] = proc
+    _children[proc.pid] = proc  # ghi vào sổ con để sau này được phép kill
     status = "running" if proc.poll() is None else "exited"
-    log_bus.log("INFO", "process", f"Spawn PID {proc.pid}: {command}")
+    log_bus.log("INFO", "process", f"Tiến trình con tạo xong → PID {proc.pid}, trạng thái {status}")
     return SpawnResponse(pid=proc.pid, status=status)
 
 
 @router.delete("/{pid}/kill", response_model=KillResponse)
 def kill_process(pid: int):
     """Gửi tín hiệu kết thúc tới một tiến trình CON do app tạo (os.kill)."""
+    log_bus.log("WARN", "process", f"───── Kill tiến trình PID {pid} ─────")
     proc = _children.get(pid)
     if proc is None:
         # An toàn: không cho kill tiến trình hệ thống / không do app tạo.
+        log_bus.log("ERROR", "process", f"Từ chối kill PID {pid}: không do app tạo")
         raise HTTPException(
             403,
             f"Chỉ được kill tiến trình do app tạo. PID {pid} không nằm trong danh sách.",
@@ -183,6 +189,7 @@ def kill_process(pid: int):
     try:
         # os.kill gửi signal tới tiến trình; SIGTERM = yêu cầu kết thúc lịch sự.
         os.kill(pid, signal.SIGTERM)
+        log_bus.log("WARN", "process", f"os.kill(PID {pid}, SIGTERM) → yêu cầu kết thúc lịch sự")
     except ProcessLookupError:
         _children.pop(pid, None)
         raise HTTPException(404, f"Không tìm thấy tiến trình {pid}")
@@ -193,14 +200,17 @@ def kill_process(pid: int):
 
     # Thu hồi: chờ con thoát để tránh zombie; nếu cứng đầu thì SIGKILL.
     try:
-        proc.wait(timeout=3)
+        proc.wait(timeout=3)  # wait() = waitpid(): thu hồi con, tránh zombie
+        log_bus.log("INFO", "process", f"wait() → PID {pid} đã thoát, thu hồi xong (không zombie)")
     except subprocess.TimeoutExpired:
+        log_bus.log("WARN", "process", f"PID {pid} không phản hồi SIGTERM → gửi SIGKILL")
         proc.kill()  # SIGKILL — không thể bị bỏ qua
         try:
             proc.wait(timeout=3)
+            log_bus.log("INFO", "process", f"wait() → PID {pid} đã bị SIGKILL kết thúc")
         except subprocess.TimeoutExpired:
             pass
     _children.pop(pid, None)
 
-    log_bus.log("WARN", "process", f"Đã kill PID {pid} (SIGTERM)")
+    log_bus.log("WARN", "process", f"Đã kill PID {pid}, kết thúc")
     return KillResponse(pid=pid, killed=True)

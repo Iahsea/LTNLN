@@ -98,6 +98,7 @@ def list_files(path: str = ""):
 
     # Thư mục trước, rồi theo tên — cho dễ nhìn.
     result.sort(key=lambda f: (not f.is_dir, f.name.lower()))
+    log_bus.log("INFO", "files", f"scandir() → liệt kê {_rel(target)} ({len(result)} mục)")
     return result
 
 
@@ -112,8 +113,10 @@ def read_file(path: str):
     if target.stat().st_size > MAX_READ_BYTES:
         raise HTTPException(413, "File quá lớn (giới hạn 1 MB)")
 
+    log_bus.log("INFO", "files", f"───── Đọc file {_rel(target)} ─────")
     try:
         # open() mở file descriptor, read() đọc nội dung.
+        log_bus.log("INFO", "files", f"open()+read() → đọc {_rel(target)} ({target.stat().st_size} bytes trên đĩa)")
         content = target.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         raise HTTPException(400, "Không phải file văn bản UTF-8")
@@ -122,7 +125,7 @@ def read_file(path: str):
     except OSError as e:
         raise HTTPException(500, f"Lỗi đọc file: {e}")
 
-    log_bus.log("INFO", "files", f"Đọc file {_rel(target)}")
+    log_bus.log("INFO", "files", f"Đọc xong {_rel(target)} → {len(content)} ký tự")
     return FileReadResponse(path=_rel(target), content=content)
 
 
@@ -133,21 +136,25 @@ def write_file(req: FileWriteRequest):
     if target.is_dir():
         raise HTTPException(400, f"Là thư mục, không thể ghi: {req.path}")
 
+    exists = target.exists()
+    log_bus.log("INFO", "files", f"───── {'Ghi đè' if exists else 'Tạo mới'} file {_rel(target)} ─────")
     try:
         # Tạo thư mục cha (vẫn nằm trong sandbox vì target đã được kiểm tra).
         target.parent.mkdir(parents=True, exist_ok=True)
         # open(...,'w') tạo mới nếu chưa có; write() ghi nội dung.
         # newline="" để KHÔNG dịch \n -> \r\n trên Windows: byte trên đĩa
         # khớp đúng bytes_written ở cả Windows lẫn Ubuntu.
+        log_bus.log("INFO", "files", f"open(mode='w') → {'mở file có sẵn' if exists else 'tạo file mới'}")
         with open(target, "w", encoding="utf-8", newline="") as f:
             f.write(req.content)
+        log_bus.log("INFO", "files", "write() → ghi nội dung xong, close() đóng fd")
     except PermissionError:
         raise HTTPException(403, f"Không đủ quyền ghi: {req.path}")
     except OSError as e:
         raise HTTPException(500, f"Lỗi ghi file: {e}")
 
     bytes_written = len(req.content.encode("utf-8"))
-    log_bus.log("INFO", "files", f"Ghi file {_rel(target)} ({bytes_written} bytes)")
+    log_bus.log("INFO", "files", f"Ghi xong {_rel(target)} ({bytes_written} bytes)")
     return FileWriteResponse(path=_rel(target), bytes_written=bytes_written)
 
 
@@ -161,16 +168,19 @@ def delete_file(path: str):
         # An toàn: chỉ xóa file, không đụng thư mục.
         raise HTTPException(400, f"Là thư mục, không xóa: {path}")
 
+    rel = _rel(target)
+    log_bus.log("WARN", "files", f"───── Xóa file {rel} ─────")
     try:
         # os.remove() = syscall unlink(): gỡ liên kết file khỏi thư mục.
+        log_bus.log("WARN", "files", f"os.remove() → unlink() gỡ {rel} khỏi thư mục")
         os.remove(target)
     except PermissionError:
         raise HTTPException(403, f"Không đủ quyền xóa: {path}")
     except OSError as e:
         raise HTTPException(500, f"Lỗi xóa file: {e}")
 
-    log_bus.log("WARN", "files", f"Xóa file {_rel(target)}")
-    return FileDeleteResponse(path=_rel(target), deleted=True)
+    log_bus.log("WARN", "files", f"Đã xóa {rel}")
+    return FileDeleteResponse(path=rel, deleted=True)
 
 
 @router.patch("/chmod", response_model=ChmodResponse)
@@ -180,20 +190,25 @@ def chmod_file(req: ChmodRequest):
     if not target.exists():
         raise HTTPException(404, f"Không tồn tại: {req.path}")
 
+    rel = _rel(target)
+    log_bus.log("INFO", "files", f"───── Đổi quyền {rel} → {req.mode} ─────")
+
     # Mode phải là số bát phân hợp lệ (3-4 chữ số), ví dụ "644", "0755".
     try:
         mode_int = int(req.mode, 8)
     except ValueError:
         raise HTTPException(400, f"Mode không hợp lệ (cần bát phân): {req.mode}")
+    log_bus.log("INFO", "files", f"Mode {req.mode} (bát phân) → {oct(mode_int)} = {mode_int} (thập phân)")
 
     try:
         # os.chmod() đổi bit quyền của inode. Lưu ý: trên Windows chỉ áp được
         # bit chỉ-đọc/ghi, không đầy đủ như Linux — sẽ chuẩn khi chạy Ubuntu.
         os.chmod(target, mode_int)
+        log_bus.log("INFO", "files", f"os.chmod() → đổi bit quyền inode của {rel}")
     except PermissionError:
         raise HTTPException(403, f"Không đủ quyền đổi mode: {req.path}")
     except OSError as e:
         raise HTTPException(500, f"Lỗi chmod: {e}")
 
-    log_bus.log("INFO", "files", f"Chmod {_rel(target)} -> {req.mode}")
-    return ChmodResponse(path=_rel(target), mode=req.mode)
+    log_bus.log("INFO", "files", f"Đổi quyền xong {rel} → {req.mode}")
+    return ChmodResponse(path=rel, mode=req.mode)
