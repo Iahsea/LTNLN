@@ -6,9 +6,9 @@
 
 ## Module tiến trình
 
-### GET /api/process?page=1&page_size=20
+### GET /api/process?page=1&page_size=6
 Liệt kê tiến trình đang chạy, **có phân trang** (sắp xếp theo PID cho ổn định).
-**Query:** `page` (≥1, mặc định 1), `page_size` (1–200, mặc định 20).
+**Query:** `page` (≥1, mặc định 1), `page_size` (1–200, mặc định 6).
 **Response:** `{ items: [{ pid, name, ppid, status, cpu_percent, memory_kb }], total, running, page, page_size, total_pages }`
 > `total` và `running` tính trên TOÀN BỘ tiến trình (không chỉ trang hiện tại).
 

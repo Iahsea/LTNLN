@@ -77,7 +77,7 @@ if IS_LINUX:
 @router.get("", response_model=ProcessListResponse)
 def list_processes(
     page: int = Query(1, ge=1, description="Trang hiện tại, bắt đầu từ 1"),
-    page_size: int = Query(20, ge=1, le=200, description="Số dòng mỗi trang"),
+    page_size: int = Query(6, ge=1, le=200, description="Số dòng mỗi trang"),
 ):
     """Liệt kê tiến trình đang chạy bằng psutil (cross-platform), có phân trang.
 
@@ -88,7 +88,7 @@ def list_processes(
     all_procs: list[ProcessInfo] = []
     # psutil.process_iter duyệt bảng tiến trình (trên Linux là đọc /proc).
     for proc in psutil.process_iter(
-        ["pid", "name", "ppid", "status", "cpu_percent", "memory_info"]
+        ["pid", "name", "ppid", "status", "cpu_percent", "memory_info", "create_time"]
     ):
         try:
             info = proc.info
@@ -101,14 +101,17 @@ def list_processes(
                     status=info.get("status") or "",
                     cpu_percent=info.get("cpu_percent") or 0.0,
                     memory_kb=int(mem.rss / 1024) if mem else 0,
+                    create_time=info.get("create_time") or 0.0,
                 )
             )
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             # Tiến trình biến mất hoặc không đủ quyền khi đọc → bỏ qua.
             continue
 
-    # Sắp xếp theo PID cho thứ tự phân trang ổn định.
-    all_procs.sort(key=lambda p: p.pid)
+    # Sắp xếp theo thời gian tạo, MỚI NHẤT lên đầu (tiến trình vừa spawn hiện ngay
+    # trang 1). PID giảm dần làm khóa phụ để thứ tự ổn định khi create_time trùng
+    # nhau, tránh nhảy dòng lúc auto-refresh.
+    all_procs.sort(key=lambda p: (p.create_time, p.pid), reverse=True)
 
     # Thống kê trên TOÀN BỘ (không chỉ trang hiện tại) để frontend hiển thị đúng.
     total = len(all_procs)

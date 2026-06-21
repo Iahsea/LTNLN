@@ -18,6 +18,7 @@ class ProcessInfo(BaseModel):
     status: str
     cpu_percent: float
     memory_kb: int
+    create_time: float  # epoch giây (psutil.create_time) — dùng để sắp xếp mới nhất trước
 
 
 class ProcessListResponse(BaseModel):

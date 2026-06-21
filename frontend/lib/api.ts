@@ -13,6 +13,7 @@ export interface ProcessInfo {
   status: string;
   cpu_percent: number;
   memory_kb: number;
+  create_time: number; // epoch giây — backend sort mới nhất trước
 }
 export interface ProcessListResponse {
   items: ProcessInfo[];
@@ -123,7 +124,7 @@ export const getHealth = () => request<{ status: string }>("/api/health");
 
 // ── Module tiến trình ─────────────────────────────────────────────────────
 
-export const listProcesses = (page = 1, pageSize = 20) =>
+export const listProcesses = (page = 1, pageSize = 6) =>
   request<ProcessListResponse>(
     "/api/process" + qs({ page: String(page), page_size: String(pageSize) })
   );

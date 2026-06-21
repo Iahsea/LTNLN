@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const REFRESH_MS = 4000;
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 6;
 
 function formatMem(kb: number): string {
   if (kb >= 1024) return `${(kb / 1024).toFixed(1)} MB`;
