@@ -80,7 +80,7 @@
 - [x] Trang Process (`app/process/page.tsx`): bảng tiến trình + nút kill / spawn
 - [x] Trang Files (`app/files/page.tsx`): bảng file + nút đọc / ghi / xóa / chmod
 - [x] Trang Socket (`app/socket/page.tsx`): bảng kết nối + form echo
-- [ ] Trang Network (`app/network/page.tsx`): bảng interface + form DNS lookup / ping
+- [x] Trang Network (`app/network/page.tsx`): bảng interface + form DNS lookup / ping
 - [x] Đánh dấu `"use client"` cho các trang/component có state, polling, WebSocket
 - [x] Auto refresh dữ liệu (`setInterval` / polling)
 - [x] Khung terminal hiển thị log realtime qua WebSocket
